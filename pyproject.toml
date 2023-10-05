@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=65.5.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pgapp"
+version = "0.0.1"
+authors = [
+    {name= "AtoKashinoki", email= "atokashinoki@gmail.com"},
+]
+description = "This module can be used to create pygame applications"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pygame>=2.5.2",
+    "numpy>=1.26.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/AtoKashinoki/pygameapp"
+"Bug Tracker" = "https://github.com/AtoKashinoki/pygameapp/issues"
