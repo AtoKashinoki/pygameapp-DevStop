@@ -32,6 +32,7 @@ def config_directory_initial_setup():
 
 
 if __name__ == name:
+    """ process when import """
     config_directory_initial_setup()
     display_config = Config(path__display_config)
     pass
