@@ -40,6 +40,9 @@ class Config:
                         float(dum) if self.re.match(r"^\d+\.\d+$", dum)
                         else int(dum) if not self.re.match(r"\D", dum)
                         else bool(dum) if self.re.match(r"^(True)$|^(False)$", dum)
+                        else tuple([
+                            int(dum_int[1:]) for dum_int in self.re.findall(r"[(|,][^,|)]", dum)
+                        ]) if self.re.match(r"^\([^(|)]+\)$", dum)
                         else dum
                         for dum in self.re.findall(r"^[^:]+|[^:]+$", line.replace(" ", ""))
                     ]
