@@ -10,8 +10,10 @@ import pygame
 import numpy
 
 # import pgapp modules
-from pgapp._fromat import *
-from pgapp._config import *
+from pgapp._fromat import DescriptorBasis, FilePath
+from pgapp._config import Config, create_config_file
+from pgapp import _inheritance as inheritance
+inh = inheritance
 
 # print name and version
 name = "pgapp"

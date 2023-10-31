@@ -1,30 +1,28 @@
 
+# import self
+from pgapp._fromat import DescriptorBasis
+
+
 class Config:
     """ config file management class """
     # import re
     import re
 
+    # instance variables
+    path = DescriptorBasis(str, mode="wr")
+    text = DescriptorBasis(str, mode="wr")
+
     def __init__(self, path: str):
         """"""
         # attribute variables
-        self.__path = path
+        self.path = path
 
         # config data
-        self.__text, self.__data = self.__read()
+        self.text, self.__data = self.__read()
         return
 
-    @property
-    def path(self) -> str:
-        """ config file path """
-        return self.__path
-
-    @property
-    def text(self) -> str:
-        """ config file text """
-        return self.__text
-
     def __repr__(self):
-        return f"[system] print text in {self.__path}\n{self.__text}"
+        return f"[system] print text in {self.path}\n{self.text}"
 
     def __read(self) -> tuple[str, dict[str, str | int | float | bool]]:
         """
@@ -60,7 +58,7 @@ class Config:
             write config data.
         :param data: config dict data
         """
-        with open(file=self.__path, mode="w", encoding="utf-8") as config:
+        with open(file=self.path, mode="w", encoding="utf-8") as config:
             config.writelines(
                 [
                     f"{key}: {value}\n"
