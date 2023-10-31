@@ -9,5 +9,5 @@ This module can be used to create pygame applications.
 - [x] 2.FilePath class in _format.py : A class that manage file path.
 - [ ] 3.Application class in _class_inheritance : A class that manage and execute UI classes.
 - [ ] 4.UI class in _class_inheritance : A class that manage pygame window and all surface itself.
-- [ ] 5.Object class in _class_inheritance : 
+- [ ] 5.Object class in _class_inheritance : A class that manage Object class and SubSurface class.
 - [ ] 6.SubSurface class in _class_inheritance : A class that manage a surface itself.
