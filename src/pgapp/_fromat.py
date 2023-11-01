@@ -60,6 +60,10 @@ class DescriptorBasis(ABC):
         """ get value """
         return instance.__dict__[self.__name]
 
+    def __del__(self):
+        """ del value """
+        raise TypeError()
+
 
 class FilePath:
     """ file path management class """
