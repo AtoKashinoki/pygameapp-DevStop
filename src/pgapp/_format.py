@@ -21,6 +21,11 @@ class DescriptorBasis(ABC):
         self.__mode = mode
         return
 
+    @property
+    def built_in_types(self):
+        """ registered built in types """
+        return self.__built_in_types
+
     def __set_name__(self, owner, name):
         """ set variable name """
         self.__owner, self.__name = owner, name
