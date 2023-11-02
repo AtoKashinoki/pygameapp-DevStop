@@ -1,4 +1,3 @@
-
 # import ABC and abstractmethod
 from abc import ABC, abstractmethod
 
@@ -20,13 +19,22 @@ class DescriptorBasis(ABC):
 
         self.__built_in_types = built_in_types
         self.__mode = mode
-
         return
 
     def __set_name__(self, owner, name):
         """ set variable name """
         self.__owner, self.__name = owner, name
         return
+
+    @property
+    def name(self) -> str:
+        """ variable name """
+        return self.__name
+
+    @property
+    def owner(self) -> str:
+        """ variable owner """
+        return self.__owner
 
     def validate(self, value):
         """
@@ -42,7 +50,7 @@ class DescriptorBasis(ABC):
             raise TypeError(f"It is now a read-only variable: {self.__name}")
 
         # validate built-in type
-        if type(value) not in self.__built_in_types:
+        if (type(value) not in self.__built_in_types) and not (value is None and None in self.__built_in_types):
             raise TypeError(f"Not match built-in types: {type(value)}")
 
         # validate function
@@ -59,10 +67,6 @@ class DescriptorBasis(ABC):
     def __get__(self, instance, owner):
         """ get value """
         return instance.__dict__[self.__name]
-
-    def __del__(self):
-        """ del value """
-        raise TypeError()
 
 
 class FilePath:

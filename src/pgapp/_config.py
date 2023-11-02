@@ -1,6 +1,6 @@
 
 # import self
-from pgapp._fromat import DescriptorBasis
+from pgapp._format import DescriptorBasis
 
 
 class Config:

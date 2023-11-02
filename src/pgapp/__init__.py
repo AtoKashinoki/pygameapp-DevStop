@@ -10,7 +10,7 @@ import pygame
 import numpy
 
 # import pgapp modules
-from pgapp._fromat import DescriptorBasis, FilePath
+from pgapp._format import DescriptorBasis, FilePath
 from pgapp._config import Config, create_config_file
 from pgapp import _inheritance as inheritance
 inh = inheritance
