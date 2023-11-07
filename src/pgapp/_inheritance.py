@@ -136,12 +136,18 @@ class Object(ObjectManagementBasis):
 
 class UI(Object):
     """ Object management class """
+    # constance variables
+    OB = Object
+    # instance variables
+    background = DescriptorBasis(tuple, str)
 
-    def __init__(self):
+    def __init__(self, background_color: str | tuple[int, int, int] = "black"):
         """ initial variable """
         super().__init__()
         # super class
         self.__SUPER_CLASS = UI
+        # instance variables
+        self.background: str | tuple[int, int, int] = background_color
         return
 
     @property
@@ -155,6 +161,12 @@ class UI(Object):
             update itself
         :param owners: tuple["owner class", ]
         """
+        return
+
+    def _execute_draw(self, master: OB.pygame.Surface):
+        """ execute draw functions """
+        master.fill(self.background)
+        super()._execute_draw(master)
         return
 
 

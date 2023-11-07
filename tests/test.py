@@ -6,6 +6,8 @@ inh = pgapp.inh
 
 
 class TestUI(inh.UI):
+    def __init__(self):
+        super().__init__("white")
 
     def update(self, owners):
         return
