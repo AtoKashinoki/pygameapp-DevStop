@@ -10,4 +10,4 @@ This module can be used to create pygame applications.
 - [x] 3.Application class in _class_inheritance : A class that manage and execute UI classes.
 - [x] 4.Object class in _class_inheritance : A class that manage Object class and SubSurface class.
 - [x] 5.UI class in _class_inheritance : A class that manage pygame window and all surface itself.
-- [ ] 6.SubSurface class in _class_inheritance : A class that manage a surface itself.
+- [x] 6.Surface class in _class_inheritance : A class that manage a surface itself.

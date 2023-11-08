@@ -69,6 +69,27 @@ class ObjectManagementBasis(_abc.ABC):
             """ get size in rect """
             return self.numpy.array(instance.__dict__["rect"][2:])
 
+    class SuperClassValidateDict(dict):
+        """ super class validate dict class """
+
+        def __init__(self, *built_in_types: object):
+            """ initial itself """
+            self.__built_in_types = built_in_types
+            super().__init__()
+            return
+
+        @property
+        def built_in_types(self):
+            """ registered built_in_types """
+            return self.__built_in_types
+
+        def __setitem__(self, key, value):
+            """ set item """
+            if value._SUPER_CLASS not in self.__built_in_types:
+                raise TypeError(f"Not match built-in types: {type(value._SUPER_CLASS)} : built-in types{self.__built_in_types}")
+            super().__setitem__(key, value)
+            return
+
 
 class Object(ObjectManagementBasis):
     """ Objects management inheritance class """
@@ -87,19 +108,24 @@ class Object(ObjectManagementBasis):
             return
 
     # instance variables
-    objects = DescriptorBasis(OM.ValidateDict)
+    objects = DescriptorBasis(OM.SuperClassValidateDict)
     rect = DescriptorBasis(OM.pygame.Rect)
     position = OM.PositionDescriptor(tuple, list, OM.numpy.ndarray)
     size = ObjectSizeDescriptor(tuple, list, OM.numpy.ndarray)
+    killing = DescriptorBasis(bool)
 
     def __init__(self):
         """ initial itself """
-        self.objects = self.ValidateDict(...)
+        # super class
+        self._SUPER_CLASS = Object
+        # itself
+        self.objects: dict = self.SuperClassValidateDict(Object, Surface)
         self.rect = self.pygame.Rect(0, 0, 0, 0)
+        self.killing = False
         return
 
     @_abc.abstractmethod
-    def update(self, *owners: tuple):
+    def update(self, owners: tuple):
         """
             update itself
         :param owners: tuple["owner class", ]
@@ -115,17 +141,26 @@ class Object(ObjectManagementBasis):
         self.update(owners)
 
         # objects
-        for object_ in self.objects:
+        for object_ in self.objects.values():
             object_._execute_update((*owners, self))
             continue
 
+        # kill object
+        objects_dum = self.OM.SuperClassValidateDict(Object, Surface)
+        for key, object_ in self.objects.items():
+            if object_.killing:
+                continue
+            objects_dum[key] = object_
+            continue
+        self.objects = objects_dum
+
         return
 
-    def _execute_draw(self, master: OM.pygame.Surface):
+    def _execute_draw(self, *args):
         """ execute draw functions """
         # objects
-        for object_ in self.objects:
-            object_._execute_draw(master)
+        for object_ in self.objects.values():
+            object_._execute_draw(*args)
             continue
         return
 
@@ -133,27 +168,28 @@ class Object(ObjectManagementBasis):
         """ copy itself """
         return self.__copy()
 
-
-class UI(Object):
-    """ Object management class """
-    # constance variables
-    OB = Object
-    # instance variables
-    background = DescriptorBasis(tuple, str)
-
-    def __init__(self, background_color: str | tuple[int, int, int] = "black"):
-        """ initial variable """
-        super().__init__()
-        # super class
-        self.__SUPER_CLASS = UI
-        # instance variables
-        self.background: str | tuple[int, int, int] = background_color
+    def kill(self):
+        """ kill self """
+        self.killing = True
         return
 
-    @property
-    def _SUPER_CLASS(self):
-        """ class UI """
-        return self.__SUPER_CLASS
+
+class Surface(Object):
+    """ Surface management class """
+    # constance variables
+    OB = Object
+    # instance
+    surface = DescriptorBasis(OB.pygame.Surface)
+    objects: dict
+
+    def __init__(self, size: tuple[int, int]):
+        """ initial surface and variables """
+        super().__init__()
+        # super class
+        self._SUPER_CLASS = Surface
+        # surface
+        self.surface = self.OB.pygame.Surface(size)
+        return
 
     @_abc.abstractmethod
     def update(self, owners: tuple):
@@ -163,10 +199,50 @@ class UI(Object):
         """
         return
 
-    def _execute_draw(self, master: OB.pygame.Surface):
+    def draw(self, master: OB.pygame.Surface):
+        """
+            draw itself
+        :param master: display surface object
+        """
+        master.blit(self.surface, self.rect)
+        return
+
+    def _execute_draw(self, *args):
+        """ execute draw function """
+        self.draw(*args)
+        super()._execute_draw(*args)
+        return
+
+
+class UI(Object):
+    """ Object management class """
+    # constance variables
+    OB = Object
+    # instance variables
+    background = DescriptorBasis(tuple, str)
+    objects: dict
+
+    def __init__(self, background_color: str | tuple[int, int, int] = "black"):
+        """ initial variable """
+        super().__init__()
+        # super class
+        self._SUPER_CLASS = UI
+        # instance variables
+        self.background: str | tuple[int, int, int] = background_color
+        return
+
+    @_abc.abstractmethod
+    def update(self, owners: tuple):
+        """
+            update itself
+        :param owners: tuple["owner class", ]
+        """
+        return
+
+    def _execute_draw(self, master, *args):
         """ execute draw functions """
         master.fill(self.background)
-        super()._execute_draw(master)
+        super()._execute_draw(master, *args)
         return
 
 
@@ -175,27 +251,6 @@ class Application(ObjectManagementBasis):
 
     # super class
     OM = ObjectManagementBasis
-
-    class SuperClassValidateDict(dict):
-        """ super class validate dict class """
-
-        def __init__(self, *built_in_types: object):
-            """ initial itself """
-            self.__built_in_types = built_in_types
-            super().__init__()
-            return
-
-        @property
-        def built_in_types(self):
-            """ registered built_in_types """
-            return self.__built_in_types
-
-        def __setitem__(self, key, value: UI):
-            """ set item """
-            if value._SUPER_CLASS not in self.__built_in_types:
-                raise TypeError(f"Not match built-in types: {type(value)}")
-            super().__setitem__(key, value)
-            return
 
     class __ValidateAssignmentList(list):
         """ event management list object """
@@ -227,16 +282,16 @@ class Application(ObjectManagementBasis):
             return
 
     # instance variables
-    UIs = DescriptorBasis(SuperClassValidateDict)
+    UIs = DescriptorBasis(OM.SuperClassValidateDict)
     master = OM.SurfaceDescriptor(OM.pygame.Surface)
     rect = DescriptorBasis(OM.pygame.Rect)
     size = OM.SizeDescriptor()
 
-    events = DescriptorBasis(__ValidateAssignmentList)
-    key_pressed = DescriptorBasis(OM.pygame.key.ScancodeWrapper)
-    key_mods = DescriptorBasis(__ValidateAssignmentInt)
-    mouse_pressed = DescriptorBasis(__ValidateAssignmentTuple)
-    mouse_pos = DescriptorBasis(__ValidateAssignmentTuple)
+    get_events = DescriptorBasis(__ValidateAssignmentList)
+    get_key_pressed = DescriptorBasis(OM.pygame.key.ScancodeWrapper)
+    get_key_mods = DescriptorBasis(__ValidateAssignmentInt)
+    get_mouse_pressed = DescriptorBasis(__ValidateAssignmentTuple)
+    get_mouse_pos = DescriptorBasis(__ValidateAssignmentTuple)
 
     start_UI_key = DescriptorBasis(str, tuple, None)
     execute_UI: UI = UISuperClassDescriptor(UI)
@@ -292,19 +347,19 @@ class Application(ObjectManagementBasis):
             self.frame_count = self.__ValidateAssignmentInt(self.frame_count + 1)
 
             # get input data of pygame
-            self.events: Application.__ValidateAssignmentList[Application.pygame.event.Event] = \
+            self.get_events: Application.__ValidateAssignmentList[Application.pygame.event.Event] = \
                 self.__ValidateAssignmentList(self.pygame.event.get())
-            self.key_pressed = self.pygame.key.get_pressed()
-            self.key_mods = self.__ValidateAssignmentInt(self.pygame.key.get_mods())
-            self.mouse_pressed = self.__ValidateAssignmentTuple(self.pygame.mouse.get_pressed())
-            self.mouse_pos = self.__ValidateAssignmentTuple(self.pygame.mouse.get_pos())
+            self.get_key_pressed = self.pygame.key.get_pressed()
+            self.get_key_mods = self.__ValidateAssignmentInt(self.pygame.key.get_mods())
+            self.get_mouse_pressed = self.__ValidateAssignmentTuple(self.pygame.mouse.get_pressed())
+            self.get_mouse_pos = self.__ValidateAssignmentTuple(self.pygame.mouse.get_pos())
 
             # forced termination
-            if self.key_pressed[self.pygame.K_DELETE]:
+            if self.get_key_pressed[self.pygame.K_DELETE]:
                 break
 
             # event check
-            for event in self.events:
+            for event in self.get_events:
                 # QUIT
                 if event.type == self.pygame.QUIT:
                     done = True
