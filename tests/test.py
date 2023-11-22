@@ -13,7 +13,8 @@ class TestSurface(inh.Surface):
         return
 
     def update(self, owners: tuple[inh.Application]):
-        print(self.killing)
+        self.position += [2, 1]
+        self.size += [1, 1]
         if owners[0].get_key_pressed[self.pygame.K_k]:
             self.kill()
         return

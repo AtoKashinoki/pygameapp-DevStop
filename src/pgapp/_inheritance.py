@@ -178,8 +178,20 @@ class Surface(Object):
     """ Surface management class """
     # constance variables
     OB = Object
+
+    class SurfaceSizeDescriptor(OB.ObjectSizeDescriptor):
+        """ descriptor for size of object variable """
+        OB = Object
+
+        def __set__(self, instance, value):
+            """ set value """
+            super().__set__(instance, value)
+            instance.__dict__["surface"] = self.OB.pygame.Surface(value)
+            return
+
     # instance
     surface = DescriptorBasis(OB.pygame.Surface)
+    size = SurfaceSizeDescriptor(tuple, list, OB.numpy.ndarray)
     objects: dict
 
     def __init__(self, size: tuple[int, int]):
