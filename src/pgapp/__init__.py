@@ -6,6 +6,7 @@ This module can be used to create pygame applications.
 # import support modules
 import os
 import glob
+import pkg_resources
 import pygame
 import numpy
 
@@ -17,7 +18,7 @@ inh = inheritance
 
 # print name and version
 name = "pgapp"
-version = "0.0.0"
+version = pkg_resources.get_distribution('pgapp').version
 print(f"{name} {version} (Python 3.10.7)")
 
 # config directory path
