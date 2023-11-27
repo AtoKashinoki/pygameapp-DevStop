@@ -44,9 +44,9 @@ class TestUI(inh.UI):
 class Test(inh.Application):
 
     def __init__(self):
-        super().__init__("test")
-        self.UIs["testUI"] = TestUI()
-        self.start_UI_key = "testUI"
+        super().__init__("test", start_UI_key="testUI", UIs={"testUI": TestUI()})
+        # self.UIs["testUI"] = TestUI()
+        # self.start_UI_key = "testUI"
         return
 
 

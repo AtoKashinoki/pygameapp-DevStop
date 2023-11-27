@@ -277,7 +277,7 @@ class Application(ObjectManagementBasis):
     class __ValidateAssignmentTuple(tuple):
         ...
 
-    class UISuperClassDescriptor(DescriptorBasis):
+    class __UISuperClassDescriptor(DescriptorBasis):
         """ descriptor for UI """
 
         def __set__(self, instance: object, value: UI):
@@ -306,11 +306,16 @@ class Application(ObjectManagementBasis):
     get_mouse_pos = DescriptorBasis(__ValidateAssignmentTuple)
 
     start_UI_key = DescriptorBasis(str, tuple, None)
-    execute_UI: UI = UISuperClassDescriptor(UI)
+    execute_UI: UI = __UISuperClassDescriptor(UI)
 
     frame_count = DescriptorBasis(__ValidateAssignmentInt)
 
-    def __init__(self, title: str, icon_surface: OM.pygame.Surface = None):
+    def __init__(self,
+                 title: str,
+                 icon_surface: OM.pygame.Surface = None,
+                 UIs: dict = None,
+                 start_UI_key: str = None
+                 ):
         """ initial itself """
         # import display config
         from pgapp import display_config
@@ -318,6 +323,9 @@ class Application(ObjectManagementBasis):
 
         # initial variables
         self.UIs = self.SuperClassValidateDict(UI)
+        if UIs is not None:
+            for key, value in UIs.items():
+                self.UIs[key] = value
         self.rect = self.OM.pygame.Rect((0, 0, 0, 0))
 
         # setup display
@@ -327,7 +335,7 @@ class Application(ObjectManagementBasis):
             self.pygame.display.set_icon(icon_surface)
 
         # setup UI variables
-        self.start_UI_key = None
+        self.start_UI_key = start_UI_key
         return
 
     def changing_UI(self, UI_key: str | tuple):
